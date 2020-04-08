@@ -1,2 +1,5 @@
 *.pdf
 *.zip
+*.o
+logclient
+logserver
