@@ -3,3 +3,4 @@
 *.o
 logclient
 logserver
+*.out

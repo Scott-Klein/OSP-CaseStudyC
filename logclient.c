@@ -3,8 +3,11 @@
 
 int main(int argc,char**argv)
 {
-	printf("Make me useful too!\n");
+    printf("Init log service ...\n");
+    int id = logServiceInit();
 
-	return 0;
+    printf("logging message...\n");
+    logMessage(id, "Fuck this bullshit");
+    return 0;
 }
 
