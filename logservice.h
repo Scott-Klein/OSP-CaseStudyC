@@ -12,7 +12,7 @@
 /* key for the queue */
 #define KEY ftok("logservice.h", 'a')
 
-/* message structure */ 
+/* message structure */
 #define MSGCHARS 255
 /* MSGCHARS is the number of characters in the message!*/
 struct message
@@ -28,4 +28,8 @@ int logServiceInit();
 int logMessage(int serviceId, char* message);
 /* logs the message message to the log service serviceID */
 
-#endif /* ifndef LOGSERVICE_H */ 
+void exitFail(char *message);
+
+void recursiveSplit(int serviceId, char *message);
+
+#endif /* ifndef LOGSERVICE_H */

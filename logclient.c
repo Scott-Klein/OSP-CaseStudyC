@@ -3,11 +3,9 @@
 
 int main(int argc,char**argv)
 {
-    printf("Init log service ...\n");
     int id = logServiceInit();
-
-    printf("logging message...\n");
-    logMessage(id, "Fuck this bullshit");
+    logMessage(id, "Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. Operating Systems programming is cool. ");
+    printf("Message sent successfully\n");
     return 0;
 }
 

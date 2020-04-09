@@ -3,7 +3,7 @@
 #include "logservice.h"
 
 void finish();
-void exitFailure();
+void exitFailure(char* failType);
 
 int main()
 {
@@ -12,34 +12,33 @@ int main()
     buffer.type = 1;
     printf("Generating Key\n");
 
-    key_t key = 1234;
-
+    key_t key = KEY;
     if (key == -1)
     {
-        printf("Key fail");
-        exitFailure();
+        exitFailure("Key failure");
     }
 
-    printf("Key created\nReadying Message Queue\n");
     int queueId = msgget(key, 0666 | IPC_EXCL | IPC_CREAT);
     if (queueId == -1)
     {
-        exitFailure();
+        exitFailure("Message Queue failure");
     }
     printf("Attached to queue %d\n", queueId);
-    printf("Starting message read.\n");
-
-    if (msgrcv(queueId, &buffer, sizeof(buffer.message), 1, 0) == -1)
+    while (1)
     {
-        exitFailure();
+        printf("\nWaiting for message\n");
+        if (msgrcv(queueId, &buffer, sizeof(buffer.message), 0, 0) == -1)
+        {
+            exitFailure("Message receive failure");
+        }
+        printf("Message recieved from process: %ld\n", buffer.type);
+        printf("Message contents: %s\n", buffer.message);
     }
-    printf("Message: %s\n", buffer.message);
-    printf("Collected message from queue");
+
     finish();
-    return 0;
 }
 
-void exitFailure()
+void exitFailure(char* failType)
 {
     perror("Message");
     exit(EXIT_FAILURE);
@@ -47,22 +46,20 @@ void exitFailure()
 
 void finish()
 {
-    key_t key;
-    key = 1234;
+    key_t key = KEY;
     int queueId = msgget(key, 0666);
     if (queueId == -1)
     {
-        printf("Queue get ");
-        exitFailure();
+        exitFailure("Message Queue failure");
     }
-
     if (msgctl(queueId, IPC_RMID, NULL) > -1)
     {
         printf("\nMessage queue deleted successfully\n");
     }
     else
     {
-        perror("\nQueue Not deleted\n");
+        exitFailure("Queue deletion fail");
     }
     exit(EXIT_SUCCESS);
 }
+

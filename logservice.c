@@ -4,7 +4,7 @@
 int logServiceInit()
 {
     int id = -1; //Make no assumptions
-    key_t key = 1234;
+    key_t key = KEY;
 
     id = msgget(key, 0666);
     if (id == -1)
@@ -16,27 +16,44 @@ int logServiceInit()
     return id;
 }
 
-int logMessage(int serviceId, char*message)
+int logMessage(int serviceId, char *message)
 {
-    int rv = -1;
+    int splitCount = 0;
+    while (strlen(message) > MSGCHARS)
+    {
+        char *fragment;
+        strncpy(fragment, message, MSGCHARS);
+        logMessage(serviceId, fragment);
+        message = &message[MSGCHARS - 1];
+        printf("Message fragment %d sent.\n", ++splitCount);
+    }
+
     struct message payload;
-    payload.type = 1;
+    payload.type = getpid();
     strncpy(payload.message, message, MSGCHARS);
     payload.message[MSGCHARS - 1] = '\0';
 
-    printf("PAYLOAD MESSAGE IS : %s\n", payload.message);
-
-    rv = msgsnd(serviceId, &payload, sizeof(payload.message), 0);
-    if (rv == -1)
+    if (msgsnd(serviceId, &payload, sizeof(payload.message), 0) == -1)
     {
-        printf("Couldnt' add message to queue");
-        perror("Error Queueing");
-        exit(EXIT_FAILURE);
+        exitFail("Message not sent");
     }
-    if (rv == 0)
-    {
-        printf("Call to msgsnd apparently succeeded\n");
-    }
+    return 1; // this line can only be hit if message successfully sent.
+}
 
-    return rv;
+void exitFail(char *message)
+{
+    perror(message);
+    exit(EXIT_FAILURE);
+}
+
+void recursiveSplit(int serviceId, char *message)
+{
+    while (strlen(message) > MSGCHARS)
+    {
+        char *fragment;
+        strncpy(fragment, message, MSGCHARS);
+        logMessage(serviceId, fragment);
+        message = &message[MSGCHARS - 1];
+        printf("Recursive splitting");
+    }
 }
